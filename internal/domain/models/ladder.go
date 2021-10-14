@@ -1,5 +1,8 @@
 package models
 
-type Ladder []struct {
-	Score int
+type LadderEntry struct {
+	Player Player
+	Score  int
 }
+
+type Ladder []LadderEntry

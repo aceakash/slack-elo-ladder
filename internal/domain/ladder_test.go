@@ -1,6 +1,7 @@
 package domain_test
 
 import (
+	"github.com/aceakash/slack-elo-ladder/internal/adapters/in_memory"
 	"github.com/aceakash/slack-elo-ladder/internal/domain/usecases"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -10,7 +11,8 @@ func TestLadder(t *testing.T) {
 
 	t.Run("When no matches have been played, all players are at the starting score", func(t *testing.T) {
 		// Given two players are registered
-		registerUser := usecases.NewRegisterUser()
+		userEventStore := in_memory.NewUserEventStore()
+		registerUser := usecases.NewRegisterUser(&userEventStore)
 		playerCount := 2
 		err := registerUser.Execute("bruce")
 		assert.NoError(t, err)
@@ -21,7 +23,8 @@ func TestLadder(t *testing.T) {
 
 		// When the ladder is computed
 		startingScore := 2000
-		computeLadder := usecases.NewComputeLadder()
+		matchEventStore := in_memory.NewMatchEventStore()
+		computeLadder := usecases.NewComputeLadder(matchEventStore, &userEventStore, startingScore)
 		ladder, err := computeLadder.Execute()
 		assert.NoError(t, err)
 
