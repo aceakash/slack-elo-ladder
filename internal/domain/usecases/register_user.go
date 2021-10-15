@@ -1,29 +1,28 @@
 package usecases
 
 import (
-	"github.com/aceakash/slack-elo-ladder/internal/domain/ports"
-	"github.com/google/uuid"
-	"time"
+	"github.com/aceakash/slack-elo-ladder/internal/domain/models"
 )
 
 type RegisterUser struct {
-	userEventStore ports.UserEventStore
+	ladder *models.Ladder
 }
 
 func (ru RegisterUser) Execute(userId string) error {
-	err := ru.userEventStore.StoreEvent(ports.UserEvent{
-		Event: ports.Event{
-			Type:      "UserRegistered",
-			ID:        uuid.New().String(),
-			Timestamp: time.Time{},
-		},
-		UserID: userId,
-	})
-	return err
+	ru.ladder.RegisterUser(userId)
+	//err := ru.userEventStore.StoreEvent(ports.UserEvent{
+	//	Event: ports.Event{
+	//		Type:      "UserRegistered",
+	//		ID:        uuid.New().String(),
+	//		Timestamp: time.Time{},
+	//	},
+	//	UserID: userId,
+	//})
+	return nil
 }
 
-func NewRegisterUser(userEventStore ports.UserEventStore) RegisterUser {
+func NewRegisterUser(ladder *models.Ladder) RegisterUser {
 	return RegisterUser{
-		userEventStore: userEventStore,
+		ladder: ladder,
 	}
 }
