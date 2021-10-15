@@ -5,7 +5,7 @@ import (
 )
 
 type RegisterUser struct {
-	ladder *models.Ladder
+	ladder *models.LadderTournament
 }
 
 func (ru RegisterUser) Execute(userId string) error {
@@ -21,7 +21,7 @@ func (ru RegisterUser) Execute(userId string) error {
 	return nil
 }
 
-func NewRegisterUser(ladder *models.Ladder) RegisterUser {
+func NewRegisterUser(ladder *models.LadderTournament) RegisterUser {
 	return RegisterUser{
 		ladder: ladder,
 	}

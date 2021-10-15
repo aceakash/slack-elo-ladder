@@ -4,33 +4,16 @@ import (
 	"github.com/aceakash/slack-elo-ladder/internal/domain/models"
 )
 
-type ComputeTable struct {
-	ladder models.Ladder
+type ComputeLadder struct {
+	ladderTournament models.LadderTournament
 }
 
-func NewComputeTable(ladder models.Ladder) ComputeTable {
-	return ComputeTable{
-		ladder: ladder,
+func NewComputeLadder(ladderTournament models.LadderTournament) ComputeLadder {
+	return ComputeLadder{
+		ladderTournament: ladderTournament,
 	}
 }
 
-func (cl ComputeTable) Execute() (models.Table, error) {
-	return cl.ladder.ComputeTable()
-
-	//userEvents, err := cl.UserEventStore.GetUserEvents()
-	//if err != nil {
-	//	panic("todo: implement me")
-	//}
-	//
-	//ladder := models.Ladder{}
-	//for _, userEvent := range userEvents {
-	//	if userEvent.Type == "UserRegistered" {
-	//		ladder = append(ladder, models.TableEntry{
-	//			Player: models.Player{ID: userEvent.UserID},
-	//			Score:  cl.startingScore,
-	//		})
-	//	}
-	//}
-
-	return models.Table{}, nil
+func (cl ComputeLadder) Execute() (models.Ladder, error) {
+	return cl.ladderTournament.ComputeLadder()
 }
