@@ -62,8 +62,8 @@ func TestLadderTournament(t *testing.T) {
 
 			// Then the diana is above bruce and the scores are correct
 			expectedLadder := models.Ladder{
-				{PlayerId: "diana", Score: 2016},
-				{PlayerId: "bruce", Score: 1984},
+				models.LadderEntry{PlayerId: "diana", Score: 2016},
+				models.LadderEntry{PlayerId: "bruce", Score: 1984},
 			}
 			assert.Equal(t, expectedLadder, ladder)
 		})
