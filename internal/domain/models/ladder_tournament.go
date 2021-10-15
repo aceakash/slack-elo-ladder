@@ -1,40 +1,25 @@
 package models
 
 import (
-	"fmt"
-	"github.com/google/uuid"
-	"sort"
-	"time"
+	"github.com/aceakash/slack-elo-ladder/internal/domain"
 )
 
-type Event struct {
-	Type      string
-	ID        string
-	Timestamp time.Time
-	Details   interface{}
-}
-
 type LadderTournament struct {
-	startingScore int
-	events        []Event
+	startingScore  int
+	constantFactor int
+	events         []Event
 }
 
-func NewLadderTournament(startingScore int) *LadderTournament {
+func NewLadderTournament(startingScore int, constantFactor int) *LadderTournament {
 	return &LadderTournament{
-		startingScore: startingScore,
-		events:        []Event{},
+		startingScore:  startingScore,
+		constantFactor: constantFactor,
+		events:         []Event{},
 	}
 }
 
 func (l *LadderTournament) RegisterUser(userId string) {
-	l.events = append(l.events, Event{
-		Type:      "UserRegistered",
-		ID:        uuid.New().String(),
-		Timestamp: time.Now(),
-		Details: UserRegisteredEventDetails{
-			UserId: userId,
-		},
-	})
+	l.events = append(l.events, NewUserRegisteredEvent(userId))
 }
 
 func (l *LadderTournament) ComputeLadder() (Ladder, error) {
@@ -43,44 +28,30 @@ func (l *LadderTournament) ComputeLadder() (Ladder, error) {
 	scores := map[string]int{}
 
 	for _, event := range l.events {
-		if event.Type == "UserRegistered" {
+		if event.Type == UserRegisteredEventType {
 			eventDetails := event.Details.(UserRegisteredEventDetails)
 			scores[eventDetails.UserId] = l.startingScore
 		}
-		if event.Type == "MatchPlayed" {
+		if event.Type == MatchPlayedEventType {
 			eventDetails := event.Details.(MatchPlayedEventDetails)
 			winnerOldScore, loserOldScore := scores[eventDetails.Winner], scores[eventDetails.Winner]
-			winnerNewScore, loserNewScore := CalculateEloScores(l.startingScore, 32, winnerOldScore, loserOldScore)
-			fmt.Println(winnerNewScore, loserNewScore)
+			winnerNewScore, loserNewScore := domain.CalculateEloRating(winnerOldScore, loserOldScore, l.constantFactor)
 			scores[eventDetails.Winner] = winnerNewScore
 			scores[eventDetails.Loser] = loserNewScore
 		}
 	}
-	fmt.Println(scores)
 	for user, score := range scores {
 		ladder = append(ladder, LadderEntry{
 			PlayerId: user,
 			Score:    score,
 		})
 	}
-	sort.Stable(ladder)
+	ladder.SortByScoreDesc()
 	return ladder, nil
 }
 
-func CalculateEloScores(startingScore int, constantFactor int, winnerOldScore int, loserOldScore int) (winnerNewScore int, loserNewScore int) {
-	return 2016, 1984
-}
-
 func (lt *LadderTournament) RegisterMatchResult(winner string, loser string) {
-	lt.events = append(lt.events, Event{
-		Type:      "MatchPlayed",
-		ID:        uuid.New().String(),
-		Timestamp: time.Now(),
-		Details: MatchPlayedEventDetails{
-			Winner: winner,
-			Loser:  loser,
-		},
-	})
+	lt.events = append(lt.events, NewMatchPlayedEvent(winner, loser))
 }
 
 type MatchPlayedEventDetails struct {

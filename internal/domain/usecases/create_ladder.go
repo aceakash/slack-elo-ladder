@@ -9,6 +9,6 @@ func NewCreateLadderTournament() CreateLadder {
 	return CreateLadder{}
 }
 
-func (cl CreateLadder) Execute(startingScore int) *models.LadderTournament {
-	return models.NewLadderTournament(startingScore)
+func (cl CreateLadder) Execute(startingScore int, constantFactor int) *models.LadderTournament {
+	return models.NewLadderTournament(startingScore, constantFactor)
 }

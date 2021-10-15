@@ -1,11 +1,17 @@
 package models
 
+import "sort"
+
 type LadderEntry struct {
 	PlayerId string
 	Score    int
 }
 
 type Ladder []LadderEntry
+
+func (l Ladder) SortByScoreDesc() {
+	sort.Stable(l)
+}
 
 func (l Ladder) Len() int {
 	return len(l)

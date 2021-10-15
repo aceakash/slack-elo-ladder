@@ -12,7 +12,7 @@ func TestLadderTournament(t *testing.T) {
 	t.Run("When no matches have been played, and the ladder is computed, all players are at the starting score on the ladder", func(t *testing.T) {
 		startingScore := 2000
 		createLadderTournamentUseCase := usecases.NewCreateLadderTournament()
-		ladderTournament := createLadderTournamentUseCase.Execute(startingScore)
+		ladderTournament := createLadderTournamentUseCase.Execute(startingScore, 32)
 
 		// Given two players are registered
 		registerUser := usecases.NewRegisterUser(ladderTournament)
@@ -41,7 +41,7 @@ func TestLadderTournament(t *testing.T) {
 		t.Run("When diana beats bruce, the ladder reflects that", func(t *testing.T) {
 			startingScore := 2000
 			createLadderTournamentUseCase := usecases.NewCreateLadderTournament()
-			ladderTournament := createLadderTournamentUseCase.Execute(startingScore)
+			ladderTournament := createLadderTournamentUseCase.Execute(startingScore, 32)
 
 			// Given two players are registered
 			registerUser := usecases.NewRegisterUser(ladderTournament)
