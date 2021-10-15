@@ -7,6 +7,7 @@ type RegisterMatchResult struct {
 }
 
 func (r RegisterMatchResult) Execute(winner string, loser string) error {
+	r.ladderTournament.RegisterMatchResult(winner, loser)
 	return nil
 }
 
