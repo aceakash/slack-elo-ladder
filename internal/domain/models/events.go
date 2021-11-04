@@ -13,10 +13,10 @@ const (
 )
 
 type Event struct {
-	Type      EventType
-	ID        string
-	Timestamp time.Time
-	Details   interface{}
+	Type      EventType `json:"type"`
+	ID        string `json:"id"`
+	Timestamp time.Time `json:"timestamp"`
+	Details   interface{} `json:"details"`
 }
 
 func NewUserRegisteredEvent(userId string) Event {
@@ -31,7 +31,7 @@ func newEvent(eventType EventType, details interface{}) Event {
 	return Event{
 		Type:      eventType,
 		ID:        uuid.New().String(),
-		Timestamp: time.Now(),
+		Timestamp: time.Now().UTC(),
 		Details:   details,
 	}
 }

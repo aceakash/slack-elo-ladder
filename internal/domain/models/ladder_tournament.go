@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"github.com/aceakash/slack-elo-ladder/internal/domain"
 )
 
@@ -54,6 +55,35 @@ func (lt *LadderTournament) RegisterMatchResult(winner string, loser string) {
 	lt.events = append(lt.events, NewMatchPlayedEvent(winner, loser))
 }
 
+func (l *LadderTournament) Json() ([]byte, error) {
+	return json.Marshal(l.Dto())
+}
+
+func (l *LadderTournament) Dto() LadderTournamentDTO {
+	return LadderTournamentDTO{
+		StartingScore:  l.startingScore,
+		ConstantFactor: l.constantFactor,
+		Events:         l.events[:],
+	}
+}
+
+func NewLadderTournamentFromDto(dto LadderTournamentDTO) *LadderTournament {
+	return &LadderTournament{
+		startingScore:  dto.StartingScore,
+		constantFactor: dto.ConstantFactor,
+		events:         dto.Events[:],
+	}
+}
+
+func NewLadderTournamentFromJson(jsonBytes []byte) (*LadderTournament, error) {
+	var ltDto LadderTournamentDTO
+	err := json.Unmarshal(jsonBytes, &ltDto)
+	if err != nil {
+		return nil, err
+	}
+	return NewLadderTournamentFromDto(ltDto), nil
+}
+
 type MatchPlayedEventDetails struct {
 	Winner string
 	Loser  string
@@ -62,3 +92,11 @@ type MatchPlayedEventDetails struct {
 type UserRegisteredEventDetails struct {
 	UserId string
 }
+
+type LadderTournamentDTO struct {
+	StartingScore  int     `json:"starting_score"`
+	ConstantFactor int     `json:"constant_factor"`
+	Events         []Event `json:"events"`
+}
+
+
